@@ -300,6 +300,7 @@ where
     Ok(encoded)
 }
 
+// Sample tests. Can use these as a reference point on how to use the api and what to expect
 #[cfg(test)]
 mod rpc_client_tests {
     use solana_program::hash::Hash;

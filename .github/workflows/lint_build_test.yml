@@ -21,13 +21,15 @@ jobs:
         with:
           caller-workflow-name: test
 
+      - name: Setup Rust tools
+        run: |
+          cargo install cargo-sort
+
       - name: Workspace sort
         run: cargo sort --workspace --check
-        shell: bash
 
       - name: Fmt
         run: cargo fmt --all --check
-        shell: bash
 
       - name: Clippy check
         run: cargo clippy --all-features --all-targets --tests -- -D warnings
