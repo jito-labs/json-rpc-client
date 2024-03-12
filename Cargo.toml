@@ -12,13 +12,13 @@ log = "0.4.17"
 reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0.189", features = ["derive"] }
 serde_json = "1.0.107"
-solana-rpc-client ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
-solana-rpc-client-api ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
-solana-sdk = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
-solana-transaction-status ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-rpc-client ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
+solana-rpc-client-api ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
+solana-sdk = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
+solana-transaction-status ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
 thiserror = "1.0.40"
 tokio = { version = "1", features = ["rt-multi-thread"] }
-solana-program ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-program ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
 
 [workspace]
 
@@ -35,5 +35,5 @@ solana-program ={ git = "https://github.com/jito-foundation/jito-solana.git", br
 #
 # Then the following patches are needed. This is due to them depending on a number of crates that we also include the
 # corresponding jito-solana version for. Because jito-solana not published to crates.io we run into build issues.
-solana-program = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
-solana-zk-token-sdk = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-program = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
+solana-zk-token-sdk = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "jl/bundle_api" }
