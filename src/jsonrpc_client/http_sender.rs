@@ -173,6 +173,7 @@ impl RpcSender for HttpSender {
                                 };
 
                         Err(RpcError::RpcResponseError {
+                            request_id: 0,
                             code: rpc_error_object.code,
                             message: rpc_error_object.message,
                             data,
