@@ -12,14 +12,28 @@ log = "0.4.17"
 reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0.189", features = ["derive"] }
 serde_json = "1.0.107"
-solana-rpc-client = "=1.17"
-solana-rpc-client-api = "=1.17"
-solana-sdk = "=1.17"
-solana-transaction-status = "=1.17"
+solana-rpc-client ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-rpc-client-api ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-sdk = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-transaction-status ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
 thiserror = "1.0.40"
 tokio = { version = "1", features = ["rt-multi-thread"] }
-
-[dev-dependencies]
-solana-program = "=1.17"
+solana-program ={ git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
 
 [workspace]
+
+[patch.crates-io]
+# If any of the following dependencies are listed above and fetched from crates.io:
+#
+#  * spl-associated-token-account
+#  * spl-instruction-padding
+#  * spl-memo
+#  * spl-pod
+#  * spl-token
+#  * spl-token-2022
+#  * spl-token-metadata-interface
+#
+# Then the following patches are needed. This is due to them depending on a number of crates that we also include the
+# corresponding jito-solana version for. Because jito-solana not published to crates.io we run into build issues.
+solana-program = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
+solana-zk-token-sdk = { git = "https://github.com/jito-foundation/jito-solana.git", branch = "v1.17" }
