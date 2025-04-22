@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use base64::{prelude::BASE64_STANDARD, Engine};
 use bincode::serialize;
 use log::*;
 use serde_json::{json, Value};
@@ -8,9 +9,10 @@ use solana_rpc_client::{
     rpc_sender::RpcTransportStats,
 };
 use solana_rpc_client_api::{
-    client_error::ErrorKind as ClientErrorKind, request::RpcError, response::Response,
+    client_error::ErrorKind as ClientErrorKind, config::RpcSendTransactionConfig,
+    request::RpcError, response::Response,
 };
-use solana_sdk::{bs58, commitment_config::CommitmentConfig};
+use solana_sdk::commitment_config::CommitmentConfig;
 use solana_transaction_status::UiTransactionEncoding;
 
 use crate::jsonrpc_client::{
@@ -192,14 +194,25 @@ impl RpcClient {
     ) -> ClientResult<String> {
         let mut serialized_encoded: Vec<String> = Vec::with_capacity(transactions.len());
         for transaction in transactions {
-            let encoding = self.default_cluster_transaction_encoding().await?;
-            serialized_encoded.push(serialize_and_encode(transaction, encoding)?);
+            serialized_encoded.push(serialize_and_encode(
+                transaction,
+                UiTransactionEncoding::Base64,
+            )?);
         }
-        //The bundle may or may
+        // The bundle may or may
         // not have been submitted to the cluster, so callers should verify the success of
         // the correct transaction signature independently.
         match self
-            .send(RpcRequest::SendBundle, json!([serialized_encoded]))
+            .send(
+                RpcRequest::SendBundle,
+                json!([
+                    serialized_encoded,
+                    RpcSendTransactionConfig {
+                        encoding: Some(UiTransactionEncoding::Base64),
+                        ..Default::default()
+                    }
+                ]),
+            )
             .await
         {
             Ok(signature_base58_str) => ClientResult::Ok(signature_base58_str),
@@ -213,12 +226,6 @@ impl RpcClient {
                 Err(err)
             }
         }
-    }
-
-    async fn default_cluster_transaction_encoding(
-        &self,
-    ) -> Result<UiTransactionEncoding, RpcError> {
-        Ok(UiTransactionEncoding::Base58)
     }
 
     /// Gets the statuses of a list of bundle ids.
@@ -290,10 +297,10 @@ where
     let serialized = serialize(input)
         .map_err(|e| ClientErrorKind::Custom(format!("Serialization failed: {e}")))?;
     let encoded = match encoding {
-        UiTransactionEncoding::Base58 => bs58::encode(serialized).into_string(),
+        UiTransactionEncoding::Base64 => BASE64_STANDARD.encode(serialized),
         _ => {
             return Err(ClientErrorKind::Custom(format!(
-                "unsupported encoding: {encoding}. Supported encodings: base58"
+                "unsupported encoding: {encoding}. Supported encodings: base64"
             ))
             .into())
         }
@@ -313,7 +320,7 @@ mod rpc_client_tests {
     use crate::jsonrpc_client::rpc_client::RpcClient;
 
     // Use the proxy server url here.
-    const SERVER_URL: &str = "http://0.0.0.0:8080/api/v1/bundles";
+    const SERVER_URL: &str = "https://london.mainnet.block-engine.jito.wtf:443/api/v1/bundles";
 
     #[tokio::test]
     pub async fn get_tip_accounts() {
@@ -345,7 +352,7 @@ mod rpc_client_tests {
         let recent_blockhash = Hash::new_unique();
 
         // Use the get_tip_accounts to randomly select a tip account to send tips to
-        let tip_account = Pubkey::try_from("3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT").unwrap();
+        let tip_account = Pubkey::try_from("DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh").unwrap();
 
         let mut bundle: Vec<_> = vec![VersionedTransaction::from(system_transaction::transfer(
             &signer_keypair,
