@@ -345,7 +345,7 @@ mod rpc_client_tests {
         let recent_blockhash = Hash::new_unique();
 
         // Use the get_tip_accounts to randomly select a tip account to send tips to
-        let tip_account = Pubkey::try_from("DCN82qDxJAQuSqHhv2BJuAgi41SPeKZB5ioBCTMNDrCC").unwrap();
+        let tip_account = Pubkey::try_from("3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT").unwrap();
 
         let mut bundle: Vec<_> = vec![VersionedTransaction::from(system_transaction::transfer(
             &signer_keypair,
